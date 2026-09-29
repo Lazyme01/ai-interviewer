@@ -12,15 +12,18 @@ const app = express()
 
 app.set("trust proxy", 1)
 
+const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.trim().replace(/\/+$/, "") : null
+
 const allowedOrigins = [
-    process.env.CLIENT_URL,
+    clientUrl,
     "http://localhost:5173"
 ].filter(Boolean)
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps, curl, or server-to-server) or matching allowed origins
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin) return callback(null, true)
+        const normalizedOrigin = origin.replace(/\/+$/, "")
+        if (allowedOrigins.some(o => o.replace(/\/+$/, "") === normalizedOrigin)) {
             callback(null, true)
         } else {
             callback(new Error("CORS policy violation: origin not allowed"))
