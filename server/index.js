@@ -14,22 +14,22 @@ app.set("trust proxy", 1)
 
 const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.trim().replace(/\/+$/, "") : null
 
-const allowedOrigins = [
-    clientUrl,
-    "http://localhost:5173"
-].filter(Boolean)
-
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true)
-        const normalizedOrigin = origin.replace(/\/+$/, "")
-        if (allowedOrigins.some(o => o.replace(/\/+$/, "") === normalizedOrigin)) {
-            callback(null, true)
-        } else {
-            callback(new Error("CORS policy violation: origin not allowed"))
+        const normalized = origin.replace(/\/+$/, "")
+        if (
+            normalized === "http://localhost:5173" ||
+            (clientUrl && normalized === clientUrl) ||
+            normalized.endsWith(".vercel.app")
+        ) {
+            return callback(null, true)
         }
+        return callback(null, false)
     },
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }))
 app.use(express.json())
 app.use(cookieParser())
