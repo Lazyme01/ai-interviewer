@@ -23,17 +23,16 @@ function InterviewReport() {
   },[])
 
 
-    if (!report) {
+  if (!report) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">
-          Loading Report...
-        </p>
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center text-white selection:bg-emerald-500/30">
+        <div className="w-10 h-10 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-zinc-400 text-sm">Loading Interview Report...</p>
       </div>
     );
   }
 
-  return <Step3Report report={report}/>
+  return <Step3Report report={report} />
 }
 
 export default InterviewReport
